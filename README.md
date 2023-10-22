@@ -1,2 +1,2 @@
-# DESDA
-This repository contains a python implementation of DESDA algorithm. 
+# DEDSTA
+This repository contains a python implementation of DEDSTA algorithm. 
