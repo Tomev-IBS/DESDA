@@ -4,6 +4,7 @@ __author__ = "Tomasz Rybotycki"
 from KDEpy import FFTKDE
 from numpy.typing import NDArray
 from dedsta.structure import DEDSTAReservoir
+from abc import ABC
 
 
 class DEDSTA:
@@ -49,3 +50,4 @@ class DEDSTA:
         )
 
         return kde.evaluate(grid_points)
+
