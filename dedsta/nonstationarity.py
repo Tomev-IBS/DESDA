@@ -33,19 +33,16 @@ class NonstationarityDegreeEstimator(ABC):
 
         :param data_point:
             New data point.
-
-        :return:
-            None.
         """
         raise NotImplementedError
 
     @abstractmethod
     def evaluate(self) -> float:
         """
-        Evaluates the estimator.
+        Computes the value on nonstationarity degree.
 
         :return:
-            Estimated nonstationarity degree.
+            Nonstationarity degree value.
         """
         raise NotImplementedError
 
@@ -86,10 +83,24 @@ class KPSSNonstationarityDegreeEstimator(NonstationarityDegreeEstimator):
 
     def evaluate(self) -> float:
         """
-        Evaluates the estimator.
+        Estimates the value of the nonstationarity degree. The formula for 1d
+        nonstationarity degree :math:`\nu` is as follows:
+
+        .. math::
+            \nu = sgm(0.995 \cdot KPSS - 2.932),
+
+        where :math:`KPSS` is the value of the KPSS test, and :math:`sgm` is the
+        sigmoid function. The values of the coefficients in the formula were selected
+        empirically. The whole process was described in
+        TODO: add reference to the paper when it comes out.
+
+        For the multidimensional case, the maximum value of the nonstationarity
+        degree is taken. This was both empirically proven to be more effective, but
+        also makes reasonable sense, as the stream should be considered non-stationary
+        even if only one of its dimensions is non-stationary.
 
         :return:
-            Estimated nonstationarity degree.
+            Estimated nonstationarity degree in the range [0, 1].
         """
         dimension_nonstationarity_degrees: List[float] = []
 
