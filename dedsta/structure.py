@@ -2,6 +2,7 @@ __author__ = "Tomasz Rybotycki"
 
 from typing import List
 import abc
+from math import floor
 from numpy.typing import ArrayLike
 
 
@@ -161,3 +162,44 @@ class DEDSTAAgingModule(DEDSTAModule):
             )
 
 
+class DEDSTAReductionModule(DEDSTAModule):
+    """
+    Class representing a module responsible for reducing the size of the reservoir in
+    DEDSTA algorithm. The reduction is expected in the nonstationarity regime.
+    """
+    def __init__(self, reservoir: DEDSTAReservoir) -> None:
+        """
+        Initializes the module.
+
+        :param reservoir:
+            Reservoir to which the module should be applied.
+        """
+        super().__init__(reservoir)
+
+    def apply(self, nonstationarity: float) -> None:
+        """
+        Reduces the size of the reservoir. The desired size varies depending on the
+        minimal and maximal size of the reservoir and on the current degree of
+        nonstationarity.
+
+        We first compute the intermediate value :math:`m*` as follows:
+        .. math::
+            m* = \text{floor}(1.1 m_0 (1 - \nu)),
+
+        where :math:`m_0` is the maximal size of the reservoir, and :math:`\nu` is the
+        nonstationarity degree. The desired size of the elements in the current step
+        is equal to :math:`m*` or :math:`m_0` (:math:`m_min`) if :math:`m*' is greater
+        (smaller) than :math:`m_0` (:math:`m_min`).
+
+        :param nonstationarity:
+            Nonstationarity degree.
+        """
+        m = floor(1.1 * self.reservoir.max_size * (1 - nonstationarity))
+
+        if m < self.reservoir.min_size:
+            m = self.reservoir.min_size
+        if m > self.reservoir.max_size:
+            m = self.reservoir.max_size
+
+        while self.reservoir.size() > m:
+            self.reservoir.remove()
